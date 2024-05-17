@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html title="Diffusion">
+    <head>
+        <title>Diffusion</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-zoom/1.7.21/jquery.zoom.min.js"></script>
+    </head>
+    <body>
+        <h2>Diffusion Series</h2>
+        <hr>
+        <div class="form-group">
+            <div class="p-2">Prompt</div>
+            <textarea class="form-control" id="prompt_textbox" rows="1" ></textarea>
+            <div class="p-2">Negative Prompt</div>
+            <textarea class="form-control" id="negative_prompt_textbox" rows="1" cols="50"></textarea>
+
+        </div>
+        <div class="d-flex bd-highlight mb-1">
+            <div class="me-auto bd-highlight" style="margin-top:auto; margin-bottom:auto;">
+                <button type="button" class="btn btn-primary rounded-0 m-1" id="start_button" onclick="SendDataTextToImage()">Generate</button>
+                <button type="button" class="btn btn-danger rounded-0 m-1" id="cancel_button" style="display:none;">Cancel</button>
+            </div>
+            
+            <div class="px-1 bd-highlight">
+                <label for="generate_in_row" class="col-sm col-form-label col-form-label-sm">Generate Numbers
+                <div class="col" style="width: 100px;">
+                    <input class="form-control form-control-sm" id="generate_in_row" type="number" max="10" min="1" step="1" value="5">
+                </div>
+            </div>
+            <div class="px-1 bd-highlight">
+                <label for="p_guidance_scale" class="col-sm col-form-label col-form-label-sm">Image Guidance Preserve Ratio</label>
+                <div class="col" style="width: 100px;">
+                    <input type="checkbox" id="p_image_guidance_preserve_ratio">
+                </div>
+            </div>
+            <div class="px-1 bd-highlight">
+                <label for="p_guidance_scale" class="col-sm col-form-label col-form-label-sm">Image Guidance Strength</label>
+                <div class="col" style="width: 100px;">
+                    <input class="form-control form-control-sm" id="p_strength" type="number" max="1.0" min="0.0" step="0.05" value="0.5">
+                </div>
+            </div>
+            <div class="px-1 bd-highlight">
+                <label for="p_guidance_scale" class="col-sm col-form-label col-form-label-sm">Guidance Scale</label>
+                <div class="col" style="width: 100px;">
+                    <input class="form-control form-control-sm" id="p_guidance_scale" type="number" min="0.0" step="0.5" value="7.5">
+                </div>
+            </div>
+            <div class="px-1 bd-highlight">
+                <label for="p_num_inference_steps" class="col-sm col-form-label col-form-label-sm">Inference Steps</label>
+                <div class="col" style="width: 100px;">
+                    <input class="form-control form-control-sm" id="p_num_inference_steps" type="number" min="0.0" step="5" value="50">
+                </div>
+            </div>
+            <div class="px-1 bd-highlight">
+                <label for="p_width" class="col-sm col-form-label col-form-label-sm">Output Width</label>
+                <div class="col" style="width: 100px;">
+                    <input class="form-control form-control-sm" id="p_width" type="number" min="0.0" value="1024">
+                </div>
+            </div>
+            <div class="px-1 bd-highlight">
+                <label for="p_height" class="col-sm col-form-label col-form-label-sm">Output Height</label>
+                <div class="col" style="width: 100px;">
+                    <input class="form-control form-control-sm" id="p_height" type="number" min="0.0" value="1024">
+                </div>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="row image-selector">
+            <div class="col image-selector-input">
+                <div class="col">
+                    <div class="h5 me-3 my-auto">Input</div>
+
+                <div class="col">
+                    <input type="file" id="image_input_btn" accept="image/*" />
+                </div>
+                <div class="col json-me-auto">
+                    <input type="file" id="image_inpaint_mask_btn" accept=".json" />
+                </div>
+                <!-- <input type="file" id="image_guidance_btn" accept="image/*" /> -->
+                </div>
+            </div>
+            <div class="col image-selector-middle">
+                <div class="col my-auto">
+                    <select name="guidance_method" id="guidance_method">
+                        <option value="image2image">Text to Image</option>
+                        <option value="inpaint">Image to Image</option>
+                        <option value="labeling_json">Inpainting from Json</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col image-selector-output">
+                <div class="col">
+                    <div class="h5 me-3 my-auto d-flex">Output</div>
+                    <button type="button" id="output_img_selector_prev" class="btn btn-outline-primary btn-sm">Prev</button>
+                    <button type="button" id="output_img_selector_next"  class="btn btn-outline-primary btn-sm">Next</button>
+                    <select name="output_img_selector" id="output_img_selector">
+                    <option value="1">1</option>
+                    </select>
+                </div>
+                
+                <!-- <input type="file" id="image_guidance_btn" accept="image/*" /> -->
+            </div>
+        </div>
+        <div class="row mx-1">
+            <div class="col border border-primary p-1 margin-left: auto;">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status" id="loading_spinner"></div>
+                    <span style="display:inline-block" id="in_image_span">
+                        <form action="/upload_image" method="POST" enctype="multipart/form-data">
+                            <img id="in_image" style="height: 53vh; width: auto;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" />
+                        </form>
+                    </span>
+                </div>
+            </div>
+            <div class="col border border-primary p-1">
+                <div class="d-flex justify-content-center" id='out_img_display_block'>
+                    <img id="out_img" style="height: 53vh; width: auto;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" />
+                </div>
+            </div>
+        </div>
+
+    </body>
+
+    <script type="text/javascript">
+
+        var has_output = null;
+        var output_display_idx = 0;
+
+        function upload_image(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#in_image').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+                }
+        }
+
+        $("#image_input_btn").change(function(){
+            upload_image(this);
+        });
+
+        function get_args() {
+            return {
+                "negative_prompt": $("#negative_prompt_textbox").val(),
+                "prompt": $("#prompt_textbox").val()
+            }
+        }
+        async function SendDataTextToImage(){
+            await $.ajax({
+                url:"/api/txt2img",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(get_args()),
+                // success:function(result){
+                //     console.log("success with prompt" +  $("#prompt_textarea").val());
+                // },
+                // error: function(e){
+                //     console.log("Error occured: \n" );
+                // }
+            });
+        }
+    </script>
+
+</html>
