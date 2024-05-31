@@ -45,7 +45,7 @@ def pipeline_txt2img():
     ret = {
         "images": []
     }
-    images = [Image.open("/media/risksis/HDD_1/LECAS/brake_pad/burnt_mark/positive-emsd (test-use)/20220422_103250.jpg")]
+    images = [Image.open("demo.jpg")]
     for img in images:
         im_file = BytesIO()
         img.save(im_file, format="PNG")
